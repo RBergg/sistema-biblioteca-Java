@@ -9,16 +9,32 @@ public class Livro {
     private int quantidadeTotal;
     private int quantidadeDisponivel;
 
+    // Gerencia a quantidade de exemplares disponíveis
+    public void emprestarExemplar() {
+        if (quantidadeDisponivel <= 0) {
+            throw new IllegalArgumentException("Não há exemplares disponíveis.");
+        }
+        quantidadeDisponivel -= 1;
+    }
+
+    // Devolve um exemplar ao estoque, desde que exista um empréstimo ativo.
+    public void devolverExemplar() {
+        if (quantidadeDisponivel == quantidadeTotal) {
+            throw new IllegalArgumentException("Não há exemplares emprestados para devolver.");
+        }
+        quantidadeDisponivel += 1;
+    }
+
+    // Adiciona novos exemplares ao acervo e atualiza o estoque disponível.
     public void adicionarExemplares(int quantidade) {
         if (quantidade <= 0) {
-            throw new IllegalArgumentException("Quantidade invalida.");
-
-
+            throw new IllegalArgumentException("Quantidade inválida.");
         }
         quantidadeTotal += quantidade;
         quantidadeDisponivel += quantidade;
     }
 
+    // Inicializa o livro e define todos os exemplares como disponíveis
     public Livro(String titulo, String autor, String isbn, int anoPublicacao, int quantidadeTotal) {
 
         setTitulo(titulo);
@@ -70,7 +86,7 @@ public class Livro {
 
     private void setIsbn(String isbn) {
         if (isbn == null || isbn.isBlank()) {
-            throw new IllegalArgumentException("isbn não pode ser vazio.");
+            throw new IllegalArgumentException("ISBN não pode ser vazio.");
         }
         this.isbn = isbn;
     }

@@ -4,12 +4,12 @@ public class Main {
 
         livro.adicionarExemplares(3);
 
-        System.out.println(livro.getTitulo());
-        System.out.println(livro.getAutor());
-        System.out.println(livro.getIsbn());
-        System.out.println(livro.getAnoPublicacao());
-        System.out.println(livro.getQuantidadeTotal());
-        System.out.println(livro.getQuantidadeDisponivel());
+        System.out.println("Titulo: " + livro.getTitulo());
+        System.out.println("Autor: " + livro.getAutor());
+        System.out.println("ISBN: " + livro.getIsbn());
+        System.out.println("Ano de publicação: " + livro.getAnoPublicacao());
+        System.out.println("Quantidade total: " + livro.getQuantidadeTotal());
+        System.out.println("Disponível em estoque: " + livro.getQuantidadeDisponivel());
     }
 
 }
