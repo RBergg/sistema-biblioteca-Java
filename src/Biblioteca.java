@@ -10,6 +10,8 @@ public class Biblioteca {
         if (livro == null) {
             throw new IllegalArgumentException("Livro inválido");
         }
+        ArrayList<Livro> livrosEncontrados = buscarLivro(livro.getIsbn());
+
         livros.add(livro);
     }
 
@@ -26,6 +28,29 @@ public class Biblioteca {
             }
         }
         return resultados;
+    }
+
+    public Leitor buscarLeitor(String cpf) {
+        if (cpf == null || cpf.isBlank()) {
+            throw new IllegalArgumentException("Busca inválida.");
+        }
+
+        for (Leitor leitor : leitores) {
+            if (leitor.getCpfLeitor().equals(cpf)) {
+                return leitor;
+            }
+        }
+        return null;
+    }
+
+    public void cadastrarLeitor(Leitor leitor) {
+        if (leitor == null) {
+            throw new IllegalArgumentException("Cadastro inválido.");
+        }
+        if (buscarLeitor(leitor.getCpfLeitor()) != null) {
+            throw new IllegalArgumentException("Leitor já cadastrado.");
+        }
+        leitores.add(leitor);
     }
 
 
