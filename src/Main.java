@@ -13,34 +13,24 @@ public class Main {
 
 
         biblioteca.cadastrarLeitor(leitor);
+        biblioteca.cadastrarLeitor(leitor1);
 
         livro.adicionarExemplares(3);
 
         biblioteca.cadastrarLivro(livro);
 
         biblioteca.realizarEmprestimo(leitor, livro);
+        biblioteca.realizarEmprestimo(leitor1, livro);
+
+        biblioteca.registrarDevolucao("12345678912", "111");
+
         biblioteca.realizarEmprestimo(leitor, livro);
 
 
         System.out.println(leitor.getNomeLeitor());
+        System.out.println(leitor1.getNomeLeitor());
+        System.out.println(livro.getQuantidadeDisponivel());
 
-        /*ArrayList<Livro> livrosEncontrados = biblioteca.buscarLivroPorTitulo("duna");
-
-        for (Livro livroEncontrado : livrosEncontrados) {
-            System.out.println(livroEncontrado.getTitulo());
-        }
-        System.out.println("Foram encontrados: " + livrosEncontrados.size() + " Livros");
-
-
-        Livro livroEncontrado = biblioteca.buscarLivroPorIsbn("444");
-
-        System.out.println(livroEncontrado.getTitulo());
-
-        leitor = biblioteca.buscarLeitor("89754632112");
-
-
-        System.out.println(livro3.getQuantidadeTotal());
-          */
 
     }
 
