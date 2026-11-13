@@ -72,6 +72,50 @@ public class Biblioteca {
         leitores.add(leitor);
     }
 
+    public Emprestimo realizarEmprestimo(Leitor leitor, Livro livro) {
+        if (leitor == null || livro == null) {
+            throw new IllegalArgumentException("Não é possível realizar o empréstimo.");
+        }
+
+        Leitor leitorEncontrado = buscarLeitor(leitor.getCpfLeitor());
+        Livro livroEncontrado = buscarLivroPorIsbn(livro.getIsbn());
+
+        if (leitorEncontrado == null || livroEncontrado == null) {
+            throw new IllegalArgumentException("Informações não encontradas");
+        }
+
+        if (livroEncontrado.getQuantidadeDisponivel() < 1) {
+            throw new IllegalArgumentException("O livro não tem saldo em estoque");
+        }
+
+        int contadorEmprestimo = 0;
+
+        for (Emprestimo emprestimo : emprestimos) {
+            if (emprestimo.getLeitor().getCpfLeitor().equals(leitorEncontrado.getCpfLeitor())
+                    && emprestimo.estaAtivo()) {
+                contadorEmprestimo++;
+            }
+        }
+        if (contadorEmprestimo >= 2) {
+            throw new IllegalArgumentException("Limite de empréstimos atingido - " + contadorEmprestimo + " -");
+        }
+
+        for (Emprestimo emprestimo : emprestimos) {
+            if (emprestimo.getLeitor().getCpfLeitor().equals(leitorEncontrado.getCpfLeitor())
+                    && emprestimo.estaAtivo() && emprestimo.estaAtrasado()) {
+                throw new IllegalArgumentException("Existe um ou mais empréstimos atrasados para este CPF");
+            }
+        }
+        Emprestimo emprestimoAtivo = new Emprestimo(leitorEncontrado, livroEncontrado);
+
+        livroEncontrado.emprestarExemplar();
+
+        emprestimos.add(emprestimoAtivo);
+
+        return emprestimoAtivo;
+
+    }
+
 
 }
 
