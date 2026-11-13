@@ -10,24 +10,43 @@ public class Biblioteca {
         if (livro == null) {
             throw new IllegalArgumentException("Livro inválido");
         }
-        ArrayList<Livro> livrosEncontrados = buscarLivro(livro.getIsbn());
 
-        livros.add(livro);
+        Livro livroEncontrado = buscarLivroPorIsbn(livro.getIsbn());
+
+        if (livroEncontrado != null) {
+            livroEncontrado.adicionarExemplares(livro.getQuantidadeTotal());
+        }
+        //Cadastra um novo livro caso ele ainda não exista no sistema.
+        else {
+            livros.add(livro);
+        }
     }
 
-    public ArrayList<Livro> buscarLivro(String termo) {
-
+    public ArrayList<Livro> buscarLivroPorTitulo(String titulo) {
         //Armazena os livros encontrados.
         ArrayList<Livro> resultados = new ArrayList<>();
-        if (termo == null || termo.isBlank()) {
+        if (titulo == null || titulo.isBlank()) {
             throw new IllegalArgumentException("Busca inválida.");
         }
         for (Livro livro : livros) {
-            if (livro.getIsbn().equals(termo) || livro.getTitulo().toLowerCase().contains(termo.toLowerCase())) {
+            if (livro.getTitulo().toLowerCase().contains(titulo.toLowerCase())) {
                 resultados.add(livro);
             }
         }
         return resultados;
+    }
+
+    public Livro buscarLivroPorIsbn(String isbn) {
+        if (isbn == null || isbn.isBlank()) {
+            throw new IllegalArgumentException("Busca inválida");
+        }
+
+        for (Livro livro : livros) {
+            if (livro.getIsbn().equals(isbn)) {
+                return livro;
+            }
+        }
+        return null;
     }
 
     public Leitor buscarLeitor(String cpf) {
