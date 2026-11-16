@@ -12,24 +12,26 @@ public class Main {
         Biblioteca biblioteca = new Biblioteca();
 
 
+        biblioteca.cadastrarLivro(livro);
+
         biblioteca.cadastrarLeitor(leitor);
         biblioteca.cadastrarLeitor(leitor1);
 
-        livro.adicionarExemplares(3);
-
-        biblioteca.cadastrarLivro(livro);
-
         biblioteca.realizarEmprestimo(leitor, livro);
-        biblioteca.realizarEmprestimo(leitor1, livro);
 
         biblioteca.registrarDevolucao("12345678912", "111");
 
-        biblioteca.realizarEmprestimo(leitor, livro);
+        System.out.print("Empréstimos: ");
+        System.out.println(biblioteca.contarEmprestimosAtivos("12345678912"));
 
+        try {
+            biblioteca.removerLeitor("12345678912");
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
 
-        System.out.println(leitor.getNomeLeitor());
-        System.out.println(leitor1.getNomeLeitor());
-        System.out.println(livro.getQuantidadeDisponivel());
+        System.out.print("Leitor: ");
+        System.out.println(biblioteca.buscarLeitor("12345678912"));
 
 
     }

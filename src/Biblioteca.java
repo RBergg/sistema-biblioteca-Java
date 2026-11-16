@@ -87,18 +87,12 @@ public class Biblioteca {
             throw new IllegalArgumentException("O livro não tem saldo em estoque");
         }
 
-        int contadorEmprestimo = 0;
-
-        for (Emprestimo emprestimo : emprestimos) {
-            if (emprestimo.getLeitor().getCpfLeitor().equals(leitorEncontrado.getCpfLeitor())
-                    && emprestimo.estaAtivo()) {
-                contadorEmprestimo++;
-            }
-        }
         // Impede que um leitor tenha mais que 2 emprestimos ativos.
-        if (contadorEmprestimo >= 2) {
-            throw new IllegalArgumentException("Limite de empréstimos atingido - " + contadorEmprestimo + " -");
+        if (contarEmprestimosAtivos(leitorEncontrado.getCpfLeitor()) >= 2) {
+            throw new IllegalArgumentException("Limite de empréstimos atingido.");
         }
+
+        // Verifica se o Leitor tem emprestimos em atraso ou já emprestou aquele exemplar.
         for (Emprestimo emprestimo : emprestimos) {
             if (emprestimo.getLeitor().getCpfLeitor().equals(leitorEncontrado.getCpfLeitor())
                     && emprestimo.estaAtivo() && emprestimo.estaAtrasado()) {
@@ -143,6 +137,8 @@ public class Biblioteca {
                 emprestimo.registrarDevolucao();
                 livroEncontrado.devolverExemplar();
                 emprestimoEncontrado = true;
+
+                break;
             }
         }
 
@@ -151,6 +147,52 @@ public class Biblioteca {
         }
     }
 
+    // Conta os emprestimos de cada CPF.
+    public int contarEmprestimosAtivos(String cpf) {
+        Leitor leitorEncontrado = buscarLeitor(cpf);
+        if (leitorEncontrado == null) {
+            throw new IllegalArgumentException("Leitor não cadastrado.");
+        }
+        int contador = 0;
+        for (Emprestimo emprestimo : emprestimos) {
+            if (emprestimo.getLeitor().getCpfLeitor().equals(leitorEncontrado.getCpfLeitor()) && emprestimo.estaAtivo()) {
+                contador++;
+            }
 
+        }
+        return contador;
+
+    }
+
+    public void removerLivro(String isbn) {
+        Livro livroEncontrado = buscarLivroPorIsbn(isbn);
+
+        if (livroEncontrado == null) {
+            throw new IllegalArgumentException("O livro não foi encontrado");
+        }
+
+        if (livroEncontrado.getQuantidadeDisponivel() < livroEncontrado.getQuantidadeTotal()) {
+            throw new IllegalArgumentException("Não é possível remover, existem exemplares emprestados.");
+        }
+
+        livros.remove(livroEncontrado);
+    }
+
+    public void removerLeitor(String cpf) {
+        Leitor leitorEncontrado = buscarLeitor(cpf);
+
+        if (leitorEncontrado == null) {
+            throw new IllegalArgumentException("O leitor não foi encontrado.");
+        }
+        int emprestimosAtivos = contarEmprestimosAtivos(leitorEncontrado.getCpfLeitor());
+        if (emprestimosAtivos == 0) {
+            leitores.remove(leitorEncontrado);
+        } else if (emprestimosAtivos > 0) {
+            throw new IllegalArgumentException("Não é possível remover o leitor. O leitor tem empréstimo ativo.");
+        }
+    }
 }
+
+
+
 
