@@ -76,7 +76,7 @@ public class Biblioteca {
             throw new IllegalArgumentException("Cadastro inválido.");
         }
         if (buscarLeitor(leitor.getCpfLeitor()) != null) {
-            throw new IllegalArgumentException("Leitor já cadastrado.");
+            throw new IllegalArgumentException("CPF já cadastrado.");
         }
         leitores.add(leitor);
     }
@@ -93,7 +93,7 @@ public class Biblioteca {
             throw new IllegalArgumentException("Informações não encontradas");
         }
         if (livroEncontrado.getQuantidadeDisponivel() < 1) {
-            throw new IllegalArgumentException("O livro não tem saldo em estoque");
+            throw new IllegalArgumentException("Todos os exemplares estão emprestados.");
         }
 
         // Impede que um leitor tenha mais que 2 emprestimos ativos.
@@ -148,7 +148,7 @@ public class Biblioteca {
         }
 
         if (!emprestimoEncontrado) {
-            throw new IllegalArgumentException("Não existe empréstimo ativo deste livro para este leitor.");
+            throw new IllegalArgumentException("O Leitor não possui empréstimo para este ISBN");
         }
     }
 
@@ -173,13 +173,14 @@ public class Biblioteca {
         Livro livroEncontrado = buscarLivroPorIsbn(isbn);
 
         if (livroEncontrado == null) {
-            throw new IllegalArgumentException("O livro não foi encontrado");
+            throw new IllegalArgumentException("Não existe cadastro para este ISBN.");
         }
-
-        if (livroEncontrado.getQuantidadeDisponivel() < livroEncontrado.getQuantidadeTotal()) {
-            throw new IllegalArgumentException("Não é possível remover, existem exemplares emprestados.");
+        // Verifica se existe algum empréstimo ativo associado ao ISBN que será removido.
+        for (Emprestimo emprestimo : emprestimos) {
+            if (emprestimo.estaAtivo() && emprestimo.getLivro().getIsbn().equals(livroEncontrado.getIsbn())) {
+                throw new IllegalArgumentException("O livro está emprestado. Não é possível remove-lo");
+            }
         }
-
         livros.remove(livroEncontrado);
     }
 
@@ -187,7 +188,7 @@ public class Biblioteca {
         Leitor leitorEncontrado = buscarLeitor(cpf);
 
         if (leitorEncontrado == null) {
-            throw new IllegalArgumentException("O leitor não foi encontrado.");
+            throw new IllegalArgumentException("Não existe cadastro para este CPF.");
         }
         int emprestimosAtivos = contarEmprestimosAtivos(leitorEncontrado.getCpfLeitor());
         if (emprestimosAtivos == 0) {
