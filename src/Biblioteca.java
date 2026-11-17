@@ -7,6 +7,7 @@ public class Biblioteca {
 
 
     public void cadastrarLivro(Livro livro) {
+
         if (livro == null) {
             throw new IllegalArgumentException("Livro inválido");
         }
@@ -14,16 +15,24 @@ public class Biblioteca {
         Livro livroEncontrado = buscarLivroPorIsbn(livro.getIsbn());
 
         if (livroEncontrado != null) {
-            livroEncontrado.adicionarExemplares(livro.getQuantidadeTotal());
+            // Em caso de ISBN e dados já cadastrados. Soma exemplares ao existente.
+            if (livroEncontrado.getTitulo().equals(livro.getTitulo()) && livroEncontrado.getAutor().equals(livro.getAutor())) {
+
+                livroEncontrado.adicionarExemplares(livro.getQuantidadeTotal());
+
+            } else {
+                // Excessão para ISBN cadastrado, mas dados divergindo.
+                throw new IllegalArgumentException("Dados não coincidem.");
+            }
         }
-        //Cadastra um novo livro caso ele ainda não exista no sistema.
+        // Cadastra um novo livro caso ele ainda não exista no sistema.
         else {
             livros.add(livro);
         }
     }
 
     public ArrayList<Livro> buscarLivroPorTitulo(String titulo) {
-        //Armazena os livros encontrados.
+        // Armazena os livros encontrados.
         ArrayList<Livro> resultados = new ArrayList<>();
         if (titulo == null || titulo.isBlank()) {
             throw new IllegalArgumentException("Busca inválida.");
@@ -94,12 +103,10 @@ public class Biblioteca {
 
         // Verifica se o Leitor tem emprestimos em atraso ou já emprestou aquele exemplar.
         for (Emprestimo emprestimo : emprestimos) {
-            if (emprestimo.getLeitor().getCpfLeitor().equals(leitorEncontrado.getCpfLeitor())
-                    && emprestimo.estaAtivo() && emprestimo.estaAtrasado()) {
+            if (emprestimo.getLeitor().getCpfLeitor().equals(leitorEncontrado.getCpfLeitor()) && emprestimo.estaAtivo() && emprestimo.estaAtrasado()) {
                 throw new IllegalArgumentException("Existe um ou mais empréstimos atrasados para este CPF");
             }
-            if (emprestimo.getLivro().getIsbn().equals(livroEncontrado.getIsbn()) && emprestimo.estaAtivo()
-                    && emprestimo.getLeitor().getCpfLeitor().equals(leitorEncontrado.getCpfLeitor())) {
+            if (emprestimo.getLivro().getIsbn().equals(livroEncontrado.getIsbn()) && emprestimo.estaAtivo() && emprestimo.getLeitor().getCpfLeitor().equals(leitorEncontrado.getCpfLeitor())) {
                 throw new IllegalArgumentException("O leitor já tem um empréstimo deste exemplar. " + livroEncontrado.getTitulo());
             }
         }
@@ -131,9 +138,7 @@ public class Biblioteca {
         boolean emprestimoEncontrado = false;
 
         for (Emprestimo emprestimo : emprestimos) {
-            if (emprestimo.getLeitor().getCpfLeitor().equals(leitorEncontrado.getCpfLeitor())
-                    && emprestimo.getLivro().getIsbn().equals(livroEncontrado.getIsbn())
-                    && emprestimo.estaAtivo()) {
+            if (emprestimo.getLeitor().getCpfLeitor().equals(leitorEncontrado.getCpfLeitor()) && emprestimo.getLivro().getIsbn().equals(livroEncontrado.getIsbn()) && emprestimo.estaAtivo()) {
                 emprestimo.registrarDevolucao();
                 livroEncontrado.devolverExemplar();
                 emprestimoEncontrado = true;
